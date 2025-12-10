@@ -2,87 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>AIS Map (Digitraffic + Leaflet)</title>
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    crossorigin=""
-  />
+  <title>AIS Map pseudo-3D</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     html, body { height: 100%; margin: 0; }
-    #map { height: 100%; width: 100%; }
-    .vessel-svg-icon { background: none !important; border: none !important; }
-    .attribution {
-      position: fixed;
-      bottom: 4px; left: 4px;
-      background: white;
-      padding: 3px 8px;
-      font-size: 11px;
-      color: #222;
-      opacity: 0.88;
-      border-radius: 4px;
-      z-index: 9999;
-      pointer-events: none;
-    }
-    .flag-img {
-      width: 24px;
-      height: 18px;
-      vertical-align: middle;
-      margin-left: 4px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      background: #eee;
-    }
+    #map { height: 100vh; width: 100vw; }
 
-    /* --- PSEUDO-3D horisontti kartan yläosaan --- */
     .sky-overlay {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 35%;
+      width: 100vw;
+      height: 35vh;
       pointer-events: none;
       z-index: 500;
       background: linear-gradient(
         to bottom,
-        rgba(5, 8, 18, 0.90),
+        rgba(5, 8, 18, 0.65),
         rgba(5, 8, 18, 0.0)
       );
-      mix-blend-mode: multiply;
+      /* mix-blend-mode: multiply;  <-- KOMMENTOI POIS jos tummentaa liikaa! */
     }
   </style>
 </head>
 <body>
-<div id="map"></div>
-<div class="sky-overlay"></div> <!-- PSEUDO-3D overlay tähän! -->
-<div class="attribution">
-  Data © Fintraffic / Digitraffic (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
-  Map © OpenStreetMap contributors.
-</div>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script>
-  // ... koko JavaScript-koodisi tähän, sama kuin aiemmin ...
-  // (jätä kaikki funktiot, datahaku ja kartta-API sellaisenaan)
-  // Tässä ei tarvitse muuttaa JavaScriptiä, vain HTML ja CSS riittää!
-  
-  // (JS-koodi jatkuu täysin ennallaan...)
-
-  const DIGITRAFFIC_USER = "JuhaMatti/AISLeafletDemo";
-  const UNLOCODE_URL = "https://raw.githubusercontent.com/datasets/un-locode/master/data/code-list.csv";
-
-  // --- MMSI country CSV ---
-  let mmsiCountry = {};
-  // ...jne...
-  // koko muu koodisi tähän...
-  // (ei muutoksia JS-osaan!)
-  
-  loadMmsiCountry(() => {
-    loadUnlocode(() => {
-      loadAis();
-      setInterval(loadAis, 60 * 1000);
-    });
-  });
-</script>
+  <div id="map"></div>
+  <div class="sky-overlay"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const leafletMap = L.map("map").setView([60.2, 22.0], 6);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(leafletMap);
+  </script>
 </body>
 </html>
