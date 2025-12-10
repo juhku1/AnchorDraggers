@@ -4,12 +4,11 @@
   <meta charset="utf-8"/>
   <title>Pseudo-3D Map More Content</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="icon" href="data:,">
   <link href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css" rel="stylesheet"/>
   <style>
     html, body { height: 100%; margin: 0; }
     #map { width: 100vw; height: 100vh; }
-
-    /* Pseudo-3D horisontti-efekti */
     .sky-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -32,11 +31,11 @@
   <script>
     const map = new maplibregl.Map({
       container: 'map',
-      style: 'https://tiles.stadiamaps.com/styles/osm-bright/style.json', // sisältörikas tyyli
-      center: [22.0, 60.2], // Suomi
+      style: 'https://demotiles.maplibre.org/style.json', // julkinen demotyyli
+      center: [22.0, 60.2],
       zoom: 6,
-      pitch: 60,           // kallistus
-      bearing: 0           // suunta
+      pitch: 60,
+      bearing: 0
     });
     map.addControl(new maplibregl.NavigationControl());
   </script>
