@@ -26,32 +26,18 @@
     #map {
       width: 100vw;
       height: 100vh;
-      position: relative;
-    }
-
-    /* Pseudo-3D horisontti */
-    .sky-overlay {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 35vh;
-      pointer-events: none;
-      z-index: 500;
-      background: linear-gradient(
-        to bottom,
-        rgba(5, 8, 18, 0.65),
-        rgba(5, 8, 18, 0)
-      );
     }
 
-    /* Tyylivalitsin ylävasempaan kulmaan */
+    /* Harmaa laatikko ylävasempaan kulmaan */
     .style-switcher {
-      position: fixed;
+      position: fixed;    /* aina ruudun kulmassa */
       top: 10px;
       left: 10px;
-      z-index: 600;
-      background: rgba(5, 8, 18, 0.85);
+      z-index: 9999;      /* kaiken muun päälle */
+      background: rgba(15, 23, 42, 0.9);
       color: #fff;
       padding: 6px 10px;
       border-radius: 6px;
@@ -59,8 +45,12 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .style-switcher label {
+      font-size: 12px;
+      opacity: 0.9;
     }
 
     .style-switcher select {
@@ -74,10 +64,10 @@
   </style>
 </head>
 <body>
+  <!-- Kartta -->
   <div id="map"></div>
-  <div class="sky-overlay"></div>
 
-  <!-- Karttatyylin valitsin -->
+  <!-- Karttatyylin valitsin (harmaa laatikko) -->
   <div class="style-switcher">
     <label for="style-select">Karttatyylit:</label>
     <select id="style-select">
@@ -93,9 +83,7 @@
   <script>
     // Karttatyylien URLit
     const styleUrls = {
-      // MapLibre demo OSM Bright (vektoritiilet)
       osmBright: 'https://demotiles.maplibre.org/styles/osm-bright-gl-style/style.json',
-      // Carto basemapit (Dark Matter / Positron / Voyager)
       darkMatter: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
       positron:   'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
       voyager:    'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
@@ -113,23 +101,25 @@
 
     map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
-    // Tyylin vaihto dropdownista
+    // Dropdown-elementti
     const selectEl = document.getElementById('style-select');
 
+    // Tyylin vaihto dropdownista
     selectEl.addEventListener('change', () => {
       const key = selectEl.value;
       const newStyle = styleUrls[key];
       if (!newStyle) return;
 
-      // Vaihda tyyli; säilytetään kamera-asetukset (center/zoom/pitch/bearing)
+      // Talletetaan nykyinen kameran tila
       const center = map.getCenter();
       const zoom = map.getZoom();
       const bearing = map.getBearing();
       const pitch = map.getPitch();
 
+      // Vaihdetaan tyyli
       map.setStyle(newStyle);
 
-      // Kun uusi tyyli on latautunut, palautetaan näkymä samaan paikkaan
+      // Kun uusi tyyli on ladattu, palautetaan näkymä
       map.once('styledata', () => {
         map.jumpTo({ center, zoom, bearing, pitch });
       });
