@@ -54,7 +54,6 @@
       pointer-events: none;
     }
 
-    /* Kartan kontrollit vähän tummemmaksi “navi”-fiilikseen */
     .leaflet-control {
       filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
     }
@@ -233,17 +232,15 @@
     return (value === null || value === undefined || value === "") ? fallback : value;
   }
 
-  // --- Ship type, color and name ---
-
   function shipTypeColor(shipType) {
     if (shipType === undefined || shipType === null) return "#888";
-    if (shipType >= 60 && shipType < 70) return "#3a9eea";    // passenger
-    if (shipType >= 70 && shipType < 80) return "#f3c300";    // cargo
-    if (shipType >= 30 && shipType < 40) return "#e84e1b";    // fishing
-    if (shipType >= 80 && shipType < 90) return "#2ecc71";    // tanker
-    if (shipType >= 90) return "#ad00ff";                     // special
-    if (shipType >= 20 && shipType < 30) return "#aaaaaa";    // tug etc
-    if (shipType >= 50 && shipType < 60) return "#1abc9c";    // pilot/SAR
+    if (shipType >= 60 && shipType < 70) return "#3a9eea";
+    if (shipType >= 70 && shipType < 80) return "#f3c300";
+    if (shipType >= 30 && shipType < 40) return "#e84e1b";
+    if (shipType >= 80 && shipType < 90) return "#2ecc71";
+    if (shipType >= 90) return "#ad00ff";
+    if (shipType >= 20 && shipType < 30) return "#aaaaaa";
+    if (shipType >= 50 && shipType < 60) return "#1abc9c";
     return "#888";
   }
 
@@ -260,7 +257,6 @@
     return "Other/Unknown";
   }
 
-  // Pseudo-3D laivaikoni (yläviisto runko, komentosilta, varjo/aallokko)
   function vesselSvg(speed, angle, color) {
     const rounded = (typeof speed === "number" && isFinite(speed) && speed > 0)
       ? Math.round(speed)
@@ -273,14 +269,12 @@
            xmlns="http://www.w3.org/2000/svg"
            style="transform:rotate(${rot}deg)">
 
-        <!-- “aallokko” perässä -->
         <path d="M10 38 C16 40 20 41 24 41 C28 41 32 40 38 38"
               fill="none"
               stroke="rgba(80,150,255,0.45)"
               stroke-width="2"
               stroke-linecap="round" />
 
-        <!-- laivan runko: terävä keula, leveä perä -->
         <polygon
           points="24,4 34,16 34,34 14,34 14,16"
           fill="${color}"
@@ -289,25 +283,21 @@
           stroke-linejoin="round"
         />
 
-        <!-- rungon alareunan varjo / vesilinja -->
         <path d="M15 30 L33 30"
               stroke="${hullDark}"
               stroke-width="2"
               stroke-linecap="round"
               opacity="0.7" />
 
-        <!-- komentosilta -->
         <rect x="18" y="17" width="12" height="7"
               fill="#f5f5f5"
               stroke="${hullDark}"
               stroke-width="1" />
 
-        <!-- komentosillan ikkunat -->
         <rect x="19" y="18.5" width="10" height="2.5"
               fill="#4a90e2"
               opacity="0.9" />
 
-        <!-- nopeus keskellä runkoa -->
         <text x="24" y="27"
               font-family="Arial"
               font-size="12"
@@ -321,13 +311,11 @@
     `;
   }
 
-  // --- MAP AND DATA LOADING ---
-
   const leafletMap = L.map("map").setView([60.2, 22.0], 6);
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 18,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    attribution: '&copy; OpenStreetMap contributors'
   }).addTo(leafletMap);
 
   let vesselLayer = null;
@@ -336,8 +324,6 @@
   const vesselState = {};
   const vesselMetadataByMmsi = {};
   let metadataLoaded = false;
-
-  // “follow vessel” -moodi (kameran lukitus alukseen)
   let followMmsi = null;
 
   async function fetchVesselMetadata() {
@@ -380,7 +366,6 @@
       if (!res.ok) throw new Error("HTTP " + res.status + " " + res.statusText);
       const data = await res.json();
 
-      // Update calculated speed for each vessel
       data.features.forEach(feature => {
         const props = feature.properties || {};
         const mmsi = props.mmsi || feature.mmsi;
@@ -484,25 +469,20 @@
           popupHtml += `<strong>Position:</strong> ${formatLatLon(latlng.lat, latlng.lng)}<br>`;
 
           const marker = L.marker(latlng, { icon: vesselIcon }).bindPopup(popupHtml);
-
-          // Klikkaamalla laivaa -> kamera seuraa sitä
           marker.on('click', () => {
             followMmsi = mmsi;
           });
-
           return marker;
         }
       }).addTo(leafletMap);
 
-      // Ensimmäisellä kerralla zoomaa kaikkiin aluksiin
       if (firstLoad) {
         const bounds = vesselLayer.getBounds();
         if (bounds.isValid()) leafletMap.fitBounds(bounds.pad(0.1));
         firstLoad = false;
       }
 
-      // Jos follow-moodi päällä, keskitä kartta valittuun alukseen
-      if (followMmsi && vesselState[followMmsi
+      if (followMmsi && vesselState[followMmsi]) {
         const v = vesselState[followMmsi];
         leafletMap.setView([v.lastLat, v.lastLon], leafletMap.getZoom());
       }
@@ -514,8 +494,6 @@
       loading = false;
     }
   }
-
-  // --- Load MMSI countries, then UN/LOCODE, then start AIS polling ---
 
   loadMmsiCountry(() => {
     loadUnlocode(() => {
