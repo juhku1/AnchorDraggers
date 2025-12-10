@@ -8,21 +8,37 @@
   <style>
     html, body { height: 100%; margin: 0; }
     #map { width: 100vw; height: 100vh; }
+
+    /* Pseudo-3D horisontti-efekti */
+    .sky-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 35vh;
+      pointer-events: none;
+      z-index: 500;
+      background: linear-gradient(
+        to bottom,
+        rgba(5, 8, 18, 0.55),
+        rgba(5, 8, 18, 0)
+      );
+    }
   </style>
 </head>
 <body>
-<div id="map"></div>
-<script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
-<script>
-  const map = new maplibregl.Map({
-    container: 'map',
-    style: 'https://tiles.stadiamaps.com/styles/osm-bright/style.json', // enemmän sisältöä!
-    center: [22.0, 60.2],
-    zoom: 6,
-    pitch: 60,
-    bearing: 0
-  });
-  map.addControl(new maplibregl.NavigationControl());
-</script>
+  <div id="map"></div>
+  <div class="sky-overlay"></div>
+  <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
+  <script>
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://tiles.stadiamaps.com/styles/osm-bright/style.json', // sisältörikas tyyli
+      center: [22.0, 60.2], // Suomi
+      zoom: 6,
+      pitch: 60,           // kallistus
+      bearing: 0           // suunta
+    });
+    map.addControl(new maplibregl.NavigationControl());
+  </script>
 </body>
 </html>
