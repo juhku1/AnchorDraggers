@@ -4,13 +4,8 @@
   <meta charset="utf-8" />
   <title>AIS Map Pseudo-3D (Digitraffic + MapLibre)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.css"/>
   <link rel="icon" href="data:,">
-
   <style>
     html, body {
       height: 100%;
@@ -82,12 +77,10 @@
   <div id="map"></div>
   <div class="sky-overlay"></div>
   <div class="ground-vignette"></div>
-
   <div class="attribution">
     Data © Fintraffic / Digitraffic (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
     Map © OpenStreetMap contributors.
   </div>
-
   <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
   <script>
     const DIGITRAFFIC_USER = "JuhaMatti/AISMapLibreDemo";
@@ -345,7 +338,7 @@
     const vesselState = {};
     const vesselMetadataByMmsi = {};
     let metadataLoaded = false;
-    const vesselMarkers = {}; // mmsi -> {marker, element}
+    const vesselMarkers = {}; // mmsi -> {marker, element, lastAngle, lastSpeed, color}
     let firstCenter = true;
 
     async function fetchVesselMetadata() {
@@ -447,7 +440,10 @@
 
           const shipType = meta.shipType;
           const color = shipTypeColor(shipType);
-          const svgIcon = vesselSvg(speed, angle, color);
+          const mapBearing = map.getBearing();
+          // *** TÄRKEÄ KOHTA: visualAngle ottaa huomioon kartan bearingin ***
+          const visualAngle = ((angle - mapBearing + 360) % 360);
+          const svgIcon = vesselSvg(speed, visualAngle, color);
           const name = meta.name || props.name || "Unknown vessel";
 
           let popupHtml = "";
@@ -504,13 +500,17 @@
               .setLngLat([lon, lat])
               .setPopup(popup)
               .addTo(map);
-            vesselMarkers[mmsi] = { marker, element: el };
+            // *** Tallennetaan viimeisin kulma, nopeus ja väri markerDataan ***
+            vesselMarkers[mmsi] = { marker, element: el, lastAngle: angle, lastSpeed: speed, color: color };
           } else {
             markerData.element.innerHTML = svgIcon;
             markerData.marker.setLngLat([lon, lat]);
             if (markerData.marker.getPopup()) {
               markerData.marker.getPopup().setHTML(popupHtml);
             }
+            markerData.lastAngle = angle;
+            markerData.lastSpeed = speed;
+            markerData.color = color;
           }
         });
 
@@ -526,6 +526,17 @@
       }
     }
 
+    // --- Laivojen ikonit päivittyvät kartan pyöriessä ---
+    function updateAllVesselIcons() {
+      const mapBearing = map.getBearing();
+      Object.entries(vesselMarkers).forEach(([mmsi, markerData]) => {
+        if (markerData.lastAngle !== undefined && markerData.lastSpeed !== undefined && markerData.color) {
+          const visualAngle = ((markerData.lastAngle - mapBearing + 360) % 360);
+          markerData.element.innerHTML = vesselSvg(markerData.lastSpeed, visualAngle, markerData.color);
+        }
+      });
+    }
+
     // Käynnistetään kun kartta on ladattu
     map.on('load', () => {
       loadMmsiCountry(() => {
@@ -535,6 +546,11 @@
         });
       });
     });
+
+    // Päivitä ikonit kun karttaa pyöritetään tai kallistetaan
+    map.on('rotate', updateAllVesselIcons);
+    map.on('pitch', updateAllVesselIcons);
+
   </script>
 </body>
 </html>
