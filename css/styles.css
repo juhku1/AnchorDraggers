@@ -246,8 +246,6 @@ html, body {
   cursor: pointer;
   outline: none;
   white-space: nowrap;
-  transition: transform 0.3s ease;
-  transform-origin: left center;
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
@@ -326,13 +324,9 @@ html, body {
 }
 
 .stats-panel-collapsed .stats-header {
-  transform: rotate(-90deg);
-  margin-bottom: 0;
   writing-mode: vertical-rl;
-  text-orientation: mixed;
   transform: rotate(180deg);
-  display: block;
-  width: max-content;
+  margin-bottom: 0;
 }
 
 .stats-panel-collapsed #stats-content {
@@ -346,9 +340,4 @@ html, body {
   color: #00eaff;
   vertical-align: middle;
   user-select: none;
-}
-
-.stats-panel:not(.stats-panel-collapsed) .stats-header {
-  transform: rotate(0deg);
-  writing-mode: horizontal-tb;
 }
