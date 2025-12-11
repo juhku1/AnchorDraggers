@@ -25,21 +25,26 @@ async function fetchVesselTrack(mmsi, hoursBack = 24) {
 }
 
 function showVesselTrack(mmsi, color = '#00eaff') {
+  console.log(`[TRACK] Attempting to show track for MMSI ${mmsi} with color ${color}`);
+  
   if (activeTracks.has(mmsi)) {
-    console.log(`Track already visible for MMSI ${mmsi}`);
+    console.log(`[TRACK] Track already visible for MMSI ${mmsi}`);
     return;
   }
 
   // Get map reference from global scope
   const mapInstance = window.map;
   if (!mapInstance) {
-    console.error('Map not initialized yet');
+    console.error('[TRACK] Map not initialized yet');
     return;
   }
+  console.log('[TRACK] Map instance found, fetching data...');
 
   fetchVesselTrack(mmsi, 24).then(positions => {
+    console.log(`[TRACK] Received ${positions.length} positions for MMSI ${mmsi}`);
+    
     if (positions.length === 0) {
-      console.warn(`No track data available for MMSI ${mmsi}`);
+      console.warn(`[TRACK] No track data available for MMSI ${mmsi}`);
       return;
     }
 
@@ -51,12 +56,16 @@ function showVesselTrack(mmsi, color = '#00eaff') {
     });
 
     const coords = positions.map(p => p.geometry.coordinates);
+    console.log(`[TRACK] First coordinate:`, coords[0]);
+    console.log(`[TRACK] Last coordinate:`, coords[coords.length - 1]);
+    console.log(`[TRACK] Total coordinates:`, coords.length);
     
     const sourceId = `track-source-${mmsi}`;
     const lineLayerId = `track-line-${mmsi}`;
     const pointLayerId = `track-points-${mmsi}`;
 
     // Add source
+    console.log(`[TRACK] Adding source ${sourceId}...`);
     mapInstance.addSource(sourceId, {
       type: 'geojson',
       data: {
@@ -69,29 +78,31 @@ function showVesselTrack(mmsi, color = '#00eaff') {
     });
 
     // Add line layer
+    console.log(`[TRACK] Adding line layer ${lineLayerId}...`);
     mapInstance.addLayer({
       id: lineLayerId,
       type: 'line',
       source: sourceId,
       paint: {
         'line-color': color,
-        'line-width': 2,
-        'line-opacity': 0.6
+        'line-width': 3,
+        'line-opacity': 0.8
       }
     });
 
     // Add point layer for position markers
+    console.log(`[TRACK] Adding point layer ${pointLayerId}...`);
     mapInstance.addLayer({
       id: pointLayerId,
       type: 'circle',
       source: sourceId,
       paint: {
-        'circle-radius': 3,
+        'circle-radius': 4,
         'circle-color': color,
-        'circle-opacity': 0.4,
+        'circle-opacity': 0.6,
         'circle-stroke-width': 1,
         'circle-stroke-color': color,
-        'circle-stroke-opacity': 0.8
+        'circle-stroke-opacity': 1
       }
     });
 
@@ -103,7 +114,9 @@ function showVesselTrack(mmsi, color = '#00eaff') {
       color
     });
 
-    console.log(`Track displayed for MMSI ${mmsi}: ${positions.length} positions`);
+    console.log(`[TRACK] ✓ Track displayed for MMSI ${mmsi}: ${positions.length} positions, ${coords.length} coordinates`);
+  }).catch(error => {
+    console.error(`[TRACK] Error displaying track for MMSI ${mmsi}:`, error);
   });
 }
 
