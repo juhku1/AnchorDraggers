@@ -135,7 +135,7 @@ async function loadTerritorialLabels() {
           layout: {
             'text-field': ['get', 'name'],
             'text-font': ['Noto Sans Regular'],
-            'text-size': 27,
+            'text-size': 35,
             'text-letter-spacing': 0.3,
             'text-transform': 'uppercase',
             'text-allow-overlap': false,
