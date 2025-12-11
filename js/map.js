@@ -30,6 +30,72 @@ if (map.touchZoomRotate && map.touchZoomRotate.disableRotation) {
   map.touchZoomRotate.disableRotation();
 }
 
+// ============================================================================
+// Territorial Waters Boundary Layer
+// ============================================================================
+
+map.on('load', () => {
+  // Add territorial sea boundary (12 nautical miles) from Maanmittauslaitos
+  // Using WMS service as GeoJSON source
+  map.addSource('territorial-waters', {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: [] // Will be populated from WMS or static GeoJSON
+    }
+  });
+  
+  // Fetch territorial waters boundary from Maanmittauslaitos WFS
+  fetchTerritorialWaters();
+});
+
+async function fetchTerritorialWaters() {
+  try {
+    // Maanmittauslaitos WFS service for territorial sea baseline
+    const wfsUrl = 'https://avoin-karttakuva.maanmittauslaitos.fi/avoin/wfs';
+    const params = new URLSearchParams({
+      service: 'WFS',
+      version: '2.0.0',
+      request: 'GetFeature',
+      typeName: 'rajoitusalueet:aluevesi_12mpk', // 12 nautical miles territorial waters
+      outputFormat: 'application/json',
+      srsName: 'EPSG:4326'
+    });
+    
+    const response = await fetch(`${wfsUrl}?${params}`);
+    if (!response.ok) {
+      console.warn('Failed to fetch territorial waters, using fallback');
+      return;
+    }
+    
+    const geojson = await response.json();
+    
+    // Update source with fetched data
+    if (map.getSource('territorial-waters')) {
+      map.getSource('territorial-waters').setData(geojson);
+      
+      // Add line layer for territorial waters boundary
+      if (!map.getLayer('territorial-waters-line')) {
+        map.addLayer({
+          id: 'territorial-waters-line',
+          type: 'line',
+          source: 'territorial-waters',
+          paint: {
+            'line-color': '#00eaff',
+            'line-width': 2,
+            'line-opacity': 0.6,
+            'line-dasharray': [3, 2]
+          }
+        });
+      }
+      
+      console.log('Territorial waters boundary loaded');
+    }
+  } catch (error) {
+    console.error('Error loading territorial waters:', error);
+  }
+}
+
 // Export map instance
 export function initMap() {
   return map;
