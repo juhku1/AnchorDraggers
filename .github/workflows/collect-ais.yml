@@ -33,21 +33,3 @@ jobs:
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
           python collect_ais.py
-      
-      - name: Configure git
-        run: |
-          git config --global user.name 'AIS Data Collector'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-      
-      - name: Commit and push data
-        run: |
-          git add data/ais/
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
-            git commit -m "📡 AIS data collection: $TIMESTAMP"
-            git push
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
