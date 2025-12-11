@@ -215,6 +215,25 @@ function updateBuoyMarkers(data, map) {
       markerData.marker.setLngLat([buoy.lon, buoy.lat]);
       markerData.popup.setHTML(popupHtml);
     }
+    
+    // Apply wave animation based on real wave data
+    const el = markerData ? markerData.element : buoyMarkers[key].element;
+    const waveHeight = buoy.observations.WaveHs; // meters
+    const wavePeriod = buoy.observations.WTP;    // seconds
+    
+    if (waveHeight !== null && wavePeriod !== null && waveHeight > 0) {
+      // Animation amplitude: scale wave height to pixels (1m = 3px movement)
+      const amplitude = waveHeight * 3;
+      // Animation duration: use actual wave period
+      const duration = wavePeriod;
+      
+      el.style.setProperty('--wave-amplitude', `${amplitude}px`);
+      el.style.setProperty('--wave-duration', `${duration}s`);
+      el.classList.add('wave-animate');
+    } else {
+      // No wave data - remove animation
+      el.classList.remove('wave-animate');
+    }
   });
   
   console.log(`Updated ${Object.keys(buoyMarkers).length} buoy markers`);
