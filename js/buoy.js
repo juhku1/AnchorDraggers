@@ -27,7 +27,7 @@ let buoyUpdateTimer = null;
 async function fetchBuoyData() {
     try {
         const now = new Date();
-        const startTime = new Date(now - 60 * 60 * 1000); // 1 hour ago
+        const startTime = new Date(now - 3 * 60 * 60 * 1000); // 3 hours ago for reliable wave height data
         
         // Use simple observation format instead of multipointcoverage
         const params = new URLSearchParams({
@@ -99,8 +99,11 @@ function parseBuoyXMLSimple(xmlText) {
         
         // Store observation value (keep latest non-null value)
         if (buoyLatestData[name].observations.hasOwnProperty(paramName)) {
-            if (value !== null || buoyLatestData[name].observations[paramName] === null) {
+            // Always update if new value is not null, or if we don't have any value yet
+            if (value !== null) {
                 buoyLatestData[name].observations[paramName] = value;
+            } else if (buoyLatestData[name].observations[paramName] === null) {
+                buoyLatestData[name].observations[paramName] = null;
             }
         }
     }
