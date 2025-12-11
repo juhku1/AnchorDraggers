@@ -671,12 +671,12 @@ html, body {
 
 .buoy-marker {
   filter: drop-shadow(0 0 4px rgba(0, 234, 255, 0.6));
-  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .buoy-marker:hover {
   transform: scale(1.2);
   filter: drop-shadow(0 0 8px rgba(0, 234, 255, 0.9));
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .buoy-popup {
