@@ -7,6 +7,7 @@ const FMI_BASE_URL = 'https://opendata.fmi.fi/wfs';
 const BUOY_UPDATE_INTERVAL = 30 * 60 * 1000; // 30 minutes
 
 // Known FMI wave buoy stations (coordinates to names)
+// Note: Simple API only returns buoys with active data, so not all may be visible at all times
 const KNOWN_BUOYS = {
     '60.12333_24.97283': 'Helsinki Suomenlinna',
     '59.24817_20.99833': 'Pohjois-Itämeri',
