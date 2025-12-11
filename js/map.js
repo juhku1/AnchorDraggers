@@ -17,7 +17,7 @@ const map = new maplibregl.Map({
   attributionControl: false,
   maxBounds: [
     [18.0, 58.5],   // Southwest corner [lng, lat] - western limit at Stockholm (18.06°E)
-    [35.0, 66.0]    // Northeast corner [lng, lat] - covers Baltic Sea region
+    [30.3, 66.0]    // Northeast corner [lng, lat] - eastern limit at St. Petersburg (30.31°E)
   ]
 });
 
