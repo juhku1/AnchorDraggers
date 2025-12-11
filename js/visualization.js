@@ -266,7 +266,7 @@ function toggleStatsPanel(forceState) {
 }
 
 // Initialize stats panel toggle handlers
-document.addEventListener("DOMContentLoaded", function() {
+export function initUIHandlers() {
   const header = document.getElementById("stats-header");
   if (header) {
     header.addEventListener("click", function(e) {
@@ -323,4 +323,4 @@ document.addEventListener("DOMContentLoaded", function() {
       modal.style.display = "none";
     }
   });
-});
+}

@@ -4,7 +4,7 @@
  */
 
 import { initBuoyData, getBuoyData, formatBuoyPopup } from './fmi.js';
-import { resetStats, registerVesselForStats, updateStatsPanel, shipTypeColor, shipTypeName, vesselSvg, flagImgTag, applyFilters } from './visualization.js';
+import { resetStats, registerVesselForStats, updateStatsPanel, shipTypeColor, shipTypeName, vesselSvg, flagImgTag, applyFilters, initUIHandlers } from './visualization.js';
 
 // ============================================================================
 // Map Setup
@@ -349,6 +349,9 @@ window.updateBuoyMarkers = updateBuoyMarkers;
 // ============================================================================
 
 map.on('load', async () => {
+  // Initialize UI handlers
+  initUIHandlers();
+  
   loadMmsiCountry(() => {
     loadUnlocode(() => {
       loadAis();
