@@ -403,17 +403,15 @@ async function loadAis(map) {
       
       popupHtml += `<div class="popup-header">`;
       popupHtml += `<div class="popup-title">${name}</div>`;
-      popupHtml += `<div class="popup-subtitle">${typeName}, ${regCountry}, ${regFlag}</div>`;
+      popupHtml += `<div class="popup-subtitle">`;
+      popupHtml += `${typeName}, ${regCountry}, ${regFlag}`;
+      if (navStatText) {
+        popupHtml += `<span style="float:right"><span class="status-dot" style="background:${navStatColor}"></span>${navStatText}</span>`;
+      }
+      popupHtml += `</div>`;
       popupHtml += `</div>`;
       
       popupHtml += `<div class="popup-section popup-scrollable">`;
-      
-      if (navStatText) {
-        popupHtml += `<div class="popup-row">`;
-        popupHtml += `<span class="label">Status:</span>`;
-        popupHtml += `<span class="value"><span class="status-dot" style="background:${navStatColor}"></span>${navStatText}</span>`;
-        popupHtml += `</div>`;
-      }
       
       if (meta.destination) {
         const dest = (destLabel && destLabel !== meta.destination) ? `${destLabel}` : meta.destination;
@@ -448,10 +446,6 @@ async function loadAis(map) {
         popupHtml += `<div class="popup-row"><span class="label">Call Sign:</span><span class="value">${meta.callSign}</span></div>`;
       }
       
-      if (rotText) {
-        popupHtml += `<div class="popup-row"><span class="label">Rate of Turn:</span><span class="value">${rotText}</span></div>`;
-      }
-      
       popupHtml += `<div class="popup-row"><span class="value">${formatLatLon(lat, lon)}</span></div>`;
       
       if (meta.imo) {
@@ -469,7 +463,7 @@ async function loadAis(map) {
         const el = document.createElement('div');
         el.className = 'vessel-svg-icon';
         el.innerHTML = svgIcon;
-        const popup = new maplibregl.Popup({ offset: 22, maxWidth: '280px' }).setHTML(popupHtml);
+        const popup = new maplibregl.Popup({ offset: 22, maxWidth: '280px', closeButton: false }).setHTML(popupHtml);
         const marker = new maplibregl.Marker({ element: el })
           .setLngLat([lon, lat])
           .setPopup(popup)
