@@ -240,9 +240,6 @@ async function loadAis() {
         popupHtml += `</details>`;
       }
       
-      popupHtml += `<button class="popup-track-btn" onclick="toggle24hAgoMarker(${mmsi}, [${lon}, ${lat}], '${color}'); event.stopPropagation();">`;
-      popupHtml += `<span class="track-icon">⟲</span> Show 24h Ago`;
-      popupHtml += `</button>`;
       popupHtml += `</div>`;
 
       // Create or update marker
