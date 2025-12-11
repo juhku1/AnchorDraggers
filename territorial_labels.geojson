@@ -4,8 +4,7 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "FINNISH WATERS",
-        "name_fi": "FINLAND"
+        "name": "FINLAND"
       },
       "geometry": {
         "type": "Point",
@@ -15,8 +14,7 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "SWEDISH WATERS",
-        "name_fi": "SWEDEN"
+        "name": "SWEDEN"
       },
       "geometry": {
         "type": "Point",
@@ -26,8 +24,7 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "ESTONIAN WATERS",
-        "name_fi": "ESTONIA"
+        "name": "ESTONIA"
       },
       "geometry": {
         "type": "Point",
@@ -37,8 +34,7 @@
     {
       "type": "Feature",
       "properties": {
-        "name": "RUSSIAN WATERS",
-        "name_fi": "RUSSIA"
+        "name": "RUSSIA"
       },
       "geometry": {
         "type": "Point",

@@ -133,7 +133,7 @@ async function loadTerritorialLabels() {
           type: 'symbol',
           source: 'territorial-labels',
           layout: {
-            'text-field': ['get', 'name_fi'],
+            'text-field': ['get', 'name'],
             'text-font': ['Noto Sans Regular'],
             'text-size': 18,
             'text-letter-spacing': 0.3,
