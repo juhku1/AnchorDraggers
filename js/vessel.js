@@ -492,11 +492,11 @@ async function loadAis(map) {
     updateStatsPanel();
     applyFilters();
 
-    // Center map on first load
-    if (firstCenter && anyPosition) {
-      map.flyTo({ center: anyPosition, zoom: 8, essential: true, bearing: 0 });
-      firstCenter = false;
-    }
+    // Don't auto-center on first load - keep initial Gulf of Finland view
+    // if (firstCenter && anyPosition) {
+    //   map.flyTo({ center: anyPosition, zoom: 8, essential: true, bearing: 0 });
+    //   firstCenter = false;
+    // }
   } catch (err) {
     console.error("Failed to load AIS data:", err);
   } finally {
