@@ -73,6 +73,17 @@ async function fetchTerritorialWaters() {
     const geojson = await response.json();
     console.log('Territorial waters data received:', geojson.features?.length, 'features');
     
+    // Debug: Check geometry types and coordinate ranges
+    if (geojson.features?.length > 0) {
+      const first = geojson.features[0];
+      console.log('First feature geometry type:', first.geometry?.type);
+      if (first.geometry?.coordinates?.length > 0) {
+        const firstCoord = first.geometry.coordinates[0];
+        const coord = Array.isArray(firstCoord[0]) ? firstCoord[0] : firstCoord;
+        console.log('Sample coordinate:', coord, '(should be [lon, lat])');
+      }
+    }
+    
     // Update source with fetched data
     if (map.getSource('territorial-waters')) {
       map.getSource('territorial-waters').setData(geojson);
@@ -95,10 +106,9 @@ async function fetchTerritorialWaters() {
           type: 'line',
           source: 'territorial-waters',
           paint: {
-            'line-color': '#00eaff',
-            'line-width': 1.5,
-            'line-opacity': 0.4,
-            'line-dasharray': [4, 3]
+            'line-color': '#ff0000',  // Bright red for visibility testing
+            'line-width': 3,           // Thicker for visibility
+            'line-opacity': 1.0        // Full opacity for testing
           }
         }, firstSymbolId); // Insert before first symbol layer (labels, markers will be on top)
       }
