@@ -99,7 +99,7 @@ function createBuoyMarker(buoy, map) {
   const el = document.createElement('div');
   el.className = 'buoy-marker';
   el.innerHTML = `
-    <svg width="32" height="40" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
+    <svg width="32" height="22" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg">
       <line x1="16" y1="8" x2="16" y2="1" stroke="#33" stroke-width="2" stroke-linecap="round"/>
       <circle cx="16" cy="0.5" r="1.5" fill="#ff6b00"/>
       <ellipse cx="16" cy="16" rx="12" ry="6" fill="#ffcc00" stroke="#cc9900" stroke-width="1.5"/>
@@ -124,7 +124,7 @@ function createBuoyMarker(buoy, map) {
 function formatBuoyPopup(buoy) {
     const obs = buoy.observations;
     
-    const buoyIcon = `<svg width="40" height="50" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg">
+    const buoyIcon = `<svg width="40" height="28" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg">
       <line x1="16" y1="8" x2="16" y2="1" stroke="#33" stroke-width="2" stroke-linecap="round"/>
       <circle cx="16" cy="0.5" r="1.5" fill="#ff6b00"/>
       <ellipse cx="16" cy="16" rx="12" ry="6" fill="#ffcc00" stroke="#cc9900" stroke-width="1.5"/>
