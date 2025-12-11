@@ -4,7 +4,7 @@
  */
 
 import { initBuoyData, getBuoyData, formatBuoyPopup } from './fmi.js';
-import { resetStats, registerVesselForStats, updateStatsPanel, shipTypeColor, shipTypeName } from './visualization.js';
+import { resetStats, registerVesselForStats, updateStatsPanel, shipTypeColor, shipTypeName, vesselSvg, flagImgTag } from './visualization.js';
 
 // ============================================================================
 // Map Setup

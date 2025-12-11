@@ -38,7 +38,7 @@ export function shipTypeName(shipType) {
 // Vessel SVG Icon Generation
 // ============================================================================
 
-function vesselSvg(speed, angle, color) {
+export function vesselSvg(speed, angle, color) {
   const rounded = (typeof speed === "number" && isFinite(speed) && speed > 0)
     ? Math.round(speed)
     : "";
@@ -55,7 +55,7 @@ function vesselSvg(speed, angle, color) {
 // Flag Icons
 // ============================================================================
 
-function flagImgTag(iso2) {
+export function flagImgTag(iso2) {
   if (!iso2) return "";
   return `<img class="flag-img" src="https://flagcdn.com/24x18/${iso2.toLowerCase()}.png" alt="${iso2} flag" loading="lazy">`;
 }
