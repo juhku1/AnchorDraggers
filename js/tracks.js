@@ -30,6 +30,13 @@ function showVesselTrack(mmsi, color = '#00eaff') {
     return;
   }
 
+  // Get map reference from global scope
+  const mapInstance = window.map;
+  if (!mapInstance) {
+    console.error('Map not initialized yet');
+    return;
+  }
+
   fetchVesselTrack(mmsi, 24).then(positions => {
     if (positions.length === 0) {
       console.warn(`No track data available for MMSI ${mmsi}`);
@@ -50,7 +57,7 @@ function showVesselTrack(mmsi, color = '#00eaff') {
     const pointLayerId = `track-points-${mmsi}`;
 
     // Add source
-    map.addSource(sourceId, {
+    mapInstance.addSource(sourceId, {
       type: 'geojson',
       data: {
         type: 'Feature',
@@ -62,7 +69,7 @@ function showVesselTrack(mmsi, color = '#00eaff') {
     });
 
     // Add line layer
-    map.addLayer({
+    mapInstance.addLayer({
       id: lineLayerId,
       type: 'line',
       source: sourceId,
@@ -74,7 +81,7 @@ function showVesselTrack(mmsi, color = '#00eaff') {
     });
 
     // Add point layer for position markers
-    map.addLayer({
+    mapInstance.addLayer({
       id: pointLayerId,
       type: 'circle',
       source: sourceId,
@@ -104,17 +111,20 @@ function hideVesselTrack(mmsi) {
   const track = activeTracks.get(mmsi);
   if (!track) return;
 
+  const mapInstance = window.map;
+  if (!mapInstance) return;
+
   // Remove layers
-  if (map.getLayer(track.lineLayerId)) {
-    map.removeLayer(track.lineLayerId);
+  if (mapInstance.getLayer(track.lineLayerId)) {
+    mapInstance.removeLayer(track.lineLayerId);
   }
-  if (map.getLayer(track.pointLayerId)) {
-    map.removeLayer(track.pointLayerId);
+  if (mapInstance.getLayer(track.pointLayerId)) {
+    mapInstance.removeLayer(track.pointLayerId);
   }
 
   // Remove source
-  if (map.getSource(track.sourceId)) {
-    map.removeSource(track.sourceId);
+  if (mapInstance.getSource(track.sourceId)) {
+    mapInstance.removeSource(track.sourceId);
   }
 
   activeTracks.delete(mmsi);

@@ -7,7 +7,7 @@
 // Map Setup
 // ============================================================================
 
-const map = new maplibregl.Map({
+window.map = new maplibregl.Map({
   container: 'map',
   style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
   center: [22.0, 60.2],
@@ -16,6 +16,8 @@ const map = new maplibregl.Map({
   bearing: 0,
   attributionControl: false
 });
+
+const map = window.map; // Local alias for convenience
 
 map.addControl(new maplibregl.NavigationControl(), 'top-right');
 map.dragRotate.disable();
