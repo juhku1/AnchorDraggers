@@ -20,6 +20,20 @@
       position: relative;
       background: #020818;
     }
+    .logo-header {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      z-index: 2001;
+      background: none;
+      pointer-events: none;
+    }
+    .logo-header svg {
+      display: block;
+      max-width: 410px;
+      width: 410px;
+      height: auto;
+    }
     .vessel-svg-icon {
       background: none !important;
       border: none !important;
@@ -74,6 +88,78 @@
   </style>
 </head>
 <body>
+  <div class="logo-header">
+    <svg width="480" height="200" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- Tausta -->
+      <rect x="0" y="0" width="480" height="200" fill="none"/>
+
+      <!-- LOGO-OSA (pienennetty ja siirretty vasemmalle) -->
+      <g transform="translate(20,10) scale(0.3)">
+        <!-- Ulompi kompassirengas -->
+        <circle cx="90" cy="90" r="78" fill="none" stroke="#00eaff" stroke-width="6" opacity="0.8"/>
+        <!-- Sisempi kompassirengas / radar-kehä -->
+        <circle cx="90" cy="90" r="55" fill="none" stroke="#00eaff" stroke-width="3" opacity="0.5"/>
+        <!-- Kompassin pääilmansuuntaviivat (N, E, S, W) -->
+        <line x1="90" y1="12"  x2="90" y2="24"  stroke="#00eaff" stroke-width="3" opacity="0.8"/>  <!-- N -->
+        <line x1="156" y1="90" x2="144" y2="90" stroke="#00eaff" stroke-width="3" opacity="0.8"/>  <!-- E -->
+        <line x1="90" y1="156" x2="90" y2="144" stroke="#00eaff" stroke-width="3" opacity="0.8"/>  <!-- S -->
+        <line x1="12" y1="90"  x2="24" y2="90"  stroke="#00eaff" stroke-width="3" opacity="0.8"/>  <!-- W -->
+        <!-- Väli-ilmansuuntaviivat (NE, SE, SW, NW) -->
+        <line x1="133" y1="32" x2="125" y2="40" stroke="#00eaff" stroke-width="1.8" opacity="0.6"/> <!-- NE -->
+        <line x1="148" y1="133" x2="138" y2="125" stroke="#00eaff" stroke-width="1.8" opacity="0.6"/> <!-- SE -->
+        <line x1="32" y1="133" x2="40" y2="125" stroke="#00eaff" stroke-width="1.8" opacity="0.6"/> <!-- SW -->
+        <line x1="48" y1="32"  x2="56" y2="40"  stroke="#00eaff" stroke-width="1.8" opacity="0.6"/> <!-- NW -->
+        <!-- Kompassitekstit -->
+        <text x="90" y="20" text-anchor="middle" fill="#00eaff" font-size="12" font-weight="bold">N</text>
+        <text x="154" y="94" text-anchor="middle" fill="#00eaff" font-size="12" font-weight="bold">E</text>
+        <text x="90" y="160" text-anchor="middle" fill="#00eaff" font-size="12" font-weight="bold">S</text>
+        <text x="26" y="94" text-anchor="middle" fill="#00eaff" font-size="12" font-weight="bold">W</text>
+        <!-- Pyörivä radar-keila (animoitu) -->
+        <g id="radar-sweep">
+          <path d="M90 90 L90 35 A55 55 0 0 1 137 82 Z"
+                fill="#00eaff"
+                opacity="0.18">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              from="0 90 90"
+              to="360 90 90"
+              dur="8s"
+              repeatCount="indefinite" />
+          </path>
+        </g>
+        <!-- Pohjoisnuoli -->
+        <polygon points="90,18 100,40 80,40" fill="#00eaff" opacity="0.95"/>
+        <!-- Ankkuri -->
+        <!-- varsi -->
+        <line x1="90" y1="60" x2="90" y2="120" stroke="#00eaff" stroke-width="5" stroke-linecap="round"/>
+        <!-- rengas -->
+        <circle cx="90" cy="50" r="9" fill="none" stroke="#00eaff" stroke-width="4"/>
+        <!-- poikkipuu -->
+        <line x1="72" y1="78" x2="108" y2="78" stroke="#00eaff" stroke-width="4" stroke-linecap="round"/>
+        <!-- kaari -->
+        <path d="M50 115 Q90 150 130 115" fill="none" stroke="#00eaff" stroke-width="5" stroke-linecap="round"/>
+        <!-- koukut -->
+        <path d="M50 115 Q45 130 60 132" stroke="#00eaff" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M130 115 Q135 130 120 132" stroke="#00eaff" stroke-width="5" fill="none" stroke-linecap="round"/>
+      </g>
+      <!-- TEKSTI-Osa oikealle isompana -->
+      <text x="75" y="40"
+            fill="#00eaff"
+            font-size="26"
+            font-weight="600"
+            letter-spacing="1.5">
+        ANCHOR DRAGGERS
+      </text>
+      <text x="75" y="55"
+            fill="#00eaff"
+            font-size="13"
+            letter-spacing="1">
+        DIY BALTIC CORRIDOR WATCH
+      </text>
+    </svg>
+  </div>
   <div id="map"></div>
   <div class="sky-overlay"></div>
   <div class="ground-vignette"></div>
@@ -540,9 +626,7 @@
         });
       });
     });
-
     // HUOM: ei enää rotate/pitch-kuuntelijoita, koska kartta ei pyöri
-
   </script>
 </body>
 </html>
