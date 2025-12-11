@@ -62,6 +62,16 @@ html, body {
   text-transform: uppercase;
 }
 
+.version {
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  color: #00eaff;
+  opacity: 0.5;
+  margin: 2px 0 0 0;
+  font-family: 'Courier New', monospace;
+}
+
 #radar-sweep {
   animation: radar-spin 4s linear infinite;
   transform-origin: 90px 90px;
