@@ -105,16 +105,7 @@ function parseBuoyXMLSimple(xmlText) {
     }
     
     const result = Object.values(buoyLatestData);
-    console.log(`Parsed ${result.length} buoys:`, result.map(b => `${b.name} (${Object.values(b.observations).filter(v => v !== null).length} params)`
-        
-        // Store observation value
-        if (buoyLatestData[name].observations.hasOwnProperty(paramName)) {
-            buoyLatestData[name].observations[paramName] = value;
-        }
-    }
-    
-    const result = Object.values(buoyLatestData);
-    console.log(`Parsed ${result.length} buoys:`, result.map(b => b.name));
+    console.log(`Parsed ${result.length} buoys:`, result.map(b => `${b.name} (${Object.values(b.observations).filter(v => v !== null).length} params)`));
     return result;
 }
 
