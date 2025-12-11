@@ -7,7 +7,7 @@ const FMI_BASE_URL = 'https://opendata.fmi.fi/wfs';
 const BUOY_UPDATE_INTERVAL = 30 * 60 * 1000; // 30 minutes
 
 let buoyData = [];
-let buoyMarkers = [];
+const buoyMarkers = {}; // Changed to object keyed by buoy name, like vessels
 let buoyUpdateTimer = null;
 
 // ============================================================================
@@ -47,7 +47,6 @@ function parseBuoyXML(xmlText) {
     const names = xmlDoc.getElementsByTagNameNS('http://www.opengis.net/gml/3.2', 'name');
     const dataBlocks = xmlDoc.getElementsByTagNameNS('http://www.opengis.net/gml/3.2', 'doubleOrNilReasonTupleList');
     
-    const buoys = [];
     const buoyLatestData = {};
     
     for (let i = 0; i < positions.length; i++) {
@@ -55,14 +54,19 @@ function parseBuoyXML(xmlText) {
         const [lat, lon] = posText.split(' ').map(Number);
         const name = names[i]?.textContent.trim() || 'Unknown Buoy';
         
+        // Skip if we already have data for this buoy
+        if (buoyLatestData[name]) continue;
+        
         if (dataBlocks[i]) {
             const rows = dataBlocks[i].textContent.trim().split('\n');
+            // Find the most recent non-null data (iterate from end)
             for (let j = rows.length - 1; j >= 0; j--) {
                 const row = rows[j].trim();
                 if (!row) continue;
                 
                 const values = row.split(/\s+/).map(v => v === 'NaN' ? null : parseFloat(v));
                 
+                // Skip if all values are null
                 if (values.every(v => v === null)) continue;
                 
                 // FMI wave observation parameters:
@@ -75,51 +79,25 @@ function parseBuoyXML(xmlText) {
                     WHDD: values[4]         // Wave direction deviation
                 };
                 
-                if (!buoyLatestData[name]) {
-                    buoyLatestData[name] = {
-                        name,
-                        lat,
-                        lon,
-                        observations
-                    };
-                    break; // Use most recent non-null data
-                }
+                buoyLatestData[name] = {
+                    name,
+                    lat,
+                    lon,
+                    observations
+                };
+                break; // Found valid data, move to next buoy
             }
         }
     }
     
-    return Object.values(buoyLatestData);
+    const result = Object.values(buoyLatestData);
+    console.log(`Parsed ${result.length} buoys:`, result.map(b => b.name));
+    return result;
 }
 
 // ============================================================================
 // Marker Management
 // ============================================================================
-
-function createBuoyMarker(buoy, map) {
-  const el = document.createElement('div');
-  el.className = 'buoy-marker';
-  el.innerHTML = `
-    <svg width="32" height="22" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg">
-      <line x1="16" y1="8" x2="16" y2="1" stroke="#33" stroke-width="2" stroke-linecap="round"/>
-      <circle cx="16" cy="0.5" r="1.5" fill="#ff6b00"/>
-      <ellipse cx="16" cy="16" rx="12" ry="6" fill="#ffcc00" stroke="#cc9900" stroke-width="1.5"/>
-      <ellipse cx="16" cy="15" rx="12" ry="5" fill="#ffe666"/>
-      <ellipse cx="16" cy="14" rx="8" ry="3" fill="#fff" opacity="0.3"/>
-    </svg>
-  `;
-  el.style.cursor = 'pointer';
-  el.style.userSelect = 'none';
-  
-  const popupHtml = formatBuoyPopup(buoy);
-  const popup = new maplibregl.Popup({ offset: 20, maxWidth: '280px' }).setHTML(popupHtml);
-  
-  const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
-    .setLngLat([buoy.lon, buoy.lat])
-    .setPopup(popup)
-    .addTo(map);
-  
-  return marker;
-}
 
 function formatBuoyPopup(buoy) {
     const obs = buoy.observations;
@@ -187,17 +165,43 @@ function formatBuoyPopup(buoy) {
 }
 
 function updateBuoyMarkers(data, map) {
-  // Remove old markers
-  buoyMarkers.forEach(marker => marker.remove());
-  buoyMarkers = [];
-  
-  // Create new markers
+  // Update or create markers (like vessel.js logic)
   data.forEach(buoy => {
-    const marker = createBuoyMarker(buoy, map);
-    buoyMarkers.push(marker);
+    const key = buoy.name;
+    const popupHtml = formatBuoyPopup(buoy);
+    
+    let markerData = buoyMarkers[key];
+    if (!markerData) {
+      // Create new marker
+      const el = document.createElement('div');
+      el.className = 'buoy-marker';
+      el.innerHTML = `
+        <svg width="32" height="22" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg">
+          <line x1="16" y1="8" x2="16" y2="1" stroke="#33" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="16" cy="0.5" r="1.5" fill="#ff6b00"/>
+          <ellipse cx="16" cy="16" rx="12" ry="6" fill="#ffcc00" stroke="#cc9900" stroke-width="1.5"/>
+          <ellipse cx="16" cy="15" rx="12" ry="5" fill="#ffe666"/>
+          <ellipse cx="16" cy="14" rx="8" ry="3" fill="#fff" opacity="0.3"/>
+        </svg>
+      `;
+      el.style.cursor = 'pointer';
+      el.style.userSelect = 'none';
+      
+      const popup = new maplibregl.Popup({ offset: 20, maxWidth: '280px' }).setHTML(popupHtml);
+      const marker = new maplibregl.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([buoy.lon, buoy.lat])
+        .setPopup(popup)
+        .addTo(map);
+      
+      buoyMarkers[key] = { marker, element: el, popup };
+    } else {
+      // Update existing marker
+      markerData.marker.setLngLat([buoy.lon, buoy.lat]);
+      markerData.popup.setHTML(popupHtml);
+    }
   });
   
-  console.log(`Updated ${buoyMarkers.length} buoy markers`);
+  console.log(`Updated ${Object.keys(buoyMarkers).length} buoy markers`);
 }
 
 // ============================================================================
