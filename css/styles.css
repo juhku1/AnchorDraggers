@@ -265,6 +265,9 @@ html, body {
   display: flex;
   align-items: center;
   gap: 8px;
+  min-height: 62px;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 
 .stats-header-title {
@@ -272,9 +275,9 @@ html, body {
 }
 
 .clear-filter-btn {
-  background: rgba(255, 0, 0, 0.2);
-  border: 1px solid rgba(255, 0, 0, 0.4);
-  color: #ff6b6b;
+  background: #222;
+  border: 1.5px solid #444;
+  color: #888;
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 16px;
@@ -288,9 +291,15 @@ html, body {
 }
 
 .clear-filter-btn:hover {
-  background: rgba(255, 0, 0, 0.3);
-  border-color: #ff6b6b;
+  background: #333;
+  border-color: #888;
   transform: scale(1.1);
+  color: #ff6b6b;
+.clear-filter-btn.active {
+  background: rgba(255, 0, 0, 0.2);
+  border: 1.5px solid #ff6b6b;
+  color: #ff6b6b;
+}
 }
 
 .clear-filter-btn:active {
