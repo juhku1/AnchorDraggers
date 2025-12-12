@@ -22,7 +22,8 @@ const countryNameToIso2 = {
   "Russian Federation": "RU", "Poland (Republic of)": "PL", "France": "FR", "Spain": "ES",
   "Portugal": "PT", "Portugal - Madeira": "PT", "Portugal - Azores": "PT", "Malta": "MT",
   "Greece": "GR", "Italy": "IT", "Iceland": "IS", "Cyprus (Republic of)": "CY",
-  "United Kingdom of Great Britain and Northern Ireland - Gibraltar": "GI"
+  "United Kingdom of Great Britain and Northern Ireland - Gibraltar": "GI",
+  "Antigua and Barbuda": "AG"
 };
 
 // ============================================================================
