@@ -1,4 +1,9 @@
-const CACHE_NAME = 'anchor-draggers-v1.29';
+// Cache version - automatically uses version from query string (?v=X.XX)
+// Update app-version meta tag in index.html to trigger cache update
+const urlParams = new URLSearchParams(self.location.search);
+const VERSION = urlParams.get('v') || '1.29';
+const CACHE_NAME = 'anchor-draggers-v' + VERSION;
+
 const urlsToCache = [
   './',
   './index.html',

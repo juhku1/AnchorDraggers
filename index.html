@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
   <meta name="description" content="Real-time AIS vessel tracking for Baltic Sea cable monitoring"/>
   <meta name="theme-color" content="#00eaff"/>
+  <meta name="app-version" content="1.29"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="Anchor Draggers"/>
@@ -51,6 +52,29 @@
       <div class="version">v1.29</div>
     </div>
   </div>
+
+  <!-- Install App Button -->
+  <button id="install-button" class="install-button" style="display: none;" title="Install App">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+  </button>
+
+  <!-- Install Banner -->
+  <div id="install-banner" class="install-banner" style="display: none;">
+    <div class="install-banner-content">
+      <span class="install-banner-icon">📲</span>
+      <div class="install-banner-text">
+        <strong>Install Anchor Draggers</strong>
+        <small>Fast access • Works offline • Full screen</small>
+      </div>
+      <button id="install-banner-button" class="install-banner-action">Install</button>
+      <button id="install-banner-close" class="install-banner-close">✕</button>
+    </div>
+  </div>
+
   <div id="map"></div>
   <div class="sky-overlay"></div>
   <div class="ground-vignette"></div>
@@ -107,11 +131,81 @@
   <script src="https://unpkg.com/maplibre-gl@2.4.0/dist/maplibre-gl.js"></script>
   <script type="module" src="js/app.js"></script>
   <script>
-    // Register service worker for PWA
+    // PWA Install Prompt
+    let deferredPrompt;
+    const installButton = document.getElementById('install-button');
+    const installBanner = document.getElementById('install-banner');
+    const installBannerButton = document.getElementById('install-banner-button');
+    const installBannerClose = document.getElementById('install-banner-close');
+
+    // Check if already installed or running as PWA
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
+
+    // Capture the beforeinstallprompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      
+      // Show install button
+      installButton.style.display = 'flex';
+      
+      // Show banner if not dismissed before and not installed
+      const bannerDismissed = localStorage.getItem('installBannerDismissed');
+      if (!bannerDismissed && !isInstalled) {
+        setTimeout(() => {
+          installBanner.style.display = 'block';
+        }, 3000); // Show after 3 seconds
+      }
+    });
+
+    // Install button click
+    installButton.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        console.log('App installed');
+      }
+      
+      deferredPrompt = null;
+      installButton.style.display = 'none';
+      installBanner.style.display = 'none';
+    });
+
+    // Banner install button click
+    installBannerButton.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        console.log('App installed');
+      }
+      
+      deferredPrompt = null;
+      installButton.style.display = 'none';
+      installBanner.style.display = 'none';
+    });
+
+    // Close banner
+    installBannerClose.addEventListener('click', () => {
+      installBanner.style.display = 'none';
+      localStorage.setItem('installBannerDismissed', 'true');
+    });
+
+    // Register service worker for PWA with version from meta tag
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-          .then(reg => console.log('Service Worker registered:', reg.scope))
+        const version = document.querySelector('meta[name="app-version"]')?.content || '1.29';
+        navigator.serviceWorker.register('./service-worker.js?v=' + version)
+          .then(reg => {
+            console.log('Service Worker registered:', reg.scope);
+            // Check for updates
+            reg.update();
+          })
           .catch(err => console.log('Service Worker registration failed:', err));
       });
     }

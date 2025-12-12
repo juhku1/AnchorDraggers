@@ -21,8 +21,7 @@ const map = new maplibregl.Map({
   ]
 });
 
-// Add navigation controls
-map.addControl(new maplibregl.NavigationControl(), 'top-right');
+// Navigation controls removed - pinch-to-zoom and scroll work on mobile/desktop
 
 // Disable ALL rotation methods (prevents jittery movement on mobile)
 map.dragRotate.disable();
