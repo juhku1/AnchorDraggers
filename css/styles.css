@@ -266,10 +266,10 @@ html, body {
   display: flex;
   align-items: center;
   gap: 8px;
-  min-height: 40px;
+  min-height: 28px;
   min-width: 130%;
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 .stats-header-title {
@@ -469,6 +469,10 @@ html, body {
   font-size: 11px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   max-width: 280px;
+  max-height: 80vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .maplibregl-popup-close-button {
@@ -489,6 +493,9 @@ html, body {
 
 .vessel-popup {
   padding: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(80vh - 40px);
 }
 
 .popup-header {
@@ -524,8 +531,8 @@ html, body {
 }
 
 .popup-scrollable {
-  max-height: 200px;
-  overflow-y: auto;
+  max-height: none;
+  overflow-y: visible;
   overflow-x: hidden;
 }
 
