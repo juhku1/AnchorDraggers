@@ -127,6 +127,19 @@ function applyFilters() {
       md.element.style.display = visible ? "" : "none";
     }
   });
+  // Show/hide clear filter button
+  const clearBtn = document.getElementById("clear-filter");
+  const hasActiveFilters = filterState.countries.size > 0 || 
+                           filterState.types.size > 0 || 
+                           filterState.destinations.size > 0;
+  if (clearBtn) {
+    clearBtn.style.display = hasActiveFilters ? "inline-flex" : "none";
+    console.log("[DEBUG] Clear filter button:", hasActiveFilters ? "visible" : "hidden", 
+                "Filters:", filterState.countries.size, filterState.types.size, filterState.destinations.size);
+  } else {
+    console.log("[DEBUG] Clear filter button not found in DOM!");
+  }
+}
 }
 
 function wireStatsFilterHandlers() {
@@ -276,6 +289,21 @@ function initUIHandlers() {
         e.preventDefault();
         e.stopPropagation();
       }
+    });
+  }
+  // Clear filter button handler
+  const clearFilterBtn = document.getElementById("clear-filter");
+  if (clearFilterBtn) {
+    clearFilterBtn.addEventListener("click", function(e) {
+      e.stopPropagation();
+      // Clear all filters
+      filterState.countries.clear();
+      filterState.types.clear();
+      filterState.destinations.clear();
+      // Show all vessels
+      applyFilters();
+      // Update stats panel to uncheck all boxes
+      updateStatsPanel();
     });
   }
   document.addEventListener("click", function(e) {
